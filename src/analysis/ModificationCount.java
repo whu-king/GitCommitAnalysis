@@ -1,0 +1,56 @@
+package analysis;
+
+import model.FileChange;
+import model.GitCommit;
+import utils.CollectionUtil;
+
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+
+/**
+ * Created by Administrator on 2016/12/1.
+ */
+public class ModificationCount {
+
+    Map<String,Integer> modificationTimesStat = new HashMap<String,Integer>();
+
+    public void whoIsMostModified(List<GitCommit> gitCommits){
+
+        for(GitCommit gitCommit :  gitCommits){
+            List<FileChange> changes = gitCommit.getFileDiff().getDiffs();
+            for(FileChange change : changes){
+                countChangeOnFileFrom(change);
+            }
+        }
+
+        Map<String,String> mapForSort = new LinkedHashMap<String, String>();
+        for(Map.Entry<String,Integer> entry : modificationTimesStat.entrySet() ){
+            String name = entry.getKey();
+            String times = String.valueOf(entry.getValue());
+            mapForSort.put(name,times);
+        }
+
+        for(Map.Entry<String,String> entry : CollectionUtil.sortMapByValue(mapForSort).entrySet() ){
+            String name = entry.getKey();
+            String times = String.valueOf(entry.getValue());
+            System.out.println("FileName : " + name + " --- " + times);
+        }
+    }
+
+    private void countChangeOnFileFrom(FileChange change){
+        String name = change.getPath();
+        if(modificationTimesStat.get(name) == null){
+            modificationTimesStat.put(name,1);
+        }else{
+            int oldTimes = modificationTimesStat.get(name);
+            oldTimes ++;
+            modificationTimesStat.put(name,oldTimes);
+        }
+    }
+
+    public static void main(String[] args){
+
+    }
+}
