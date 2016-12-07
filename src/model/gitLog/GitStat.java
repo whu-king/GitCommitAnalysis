@@ -1,4 +1,4 @@
-package model;
+package model.gitLog;
 
 import java.util.List;
 

@@ -1,14 +1,14 @@
 package dataAccess;
 
 import analysis.ModificationCount;
-import com.google.gson.Gson;
-import model.GitCommit;
-import model.GitStat;
+import model.fileGraph.FileGraph;
+import model.fileGraph.Graph;
+import model.gitLog.GitCommit;
+import model.gitLog.GitStat;
 import utils.FileOperation;
 import utils.GsonUtil;
-import utils.JsonUtil;
 
-import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -52,6 +52,12 @@ public class DataMerge {
         List<GitCommit> gitCommits =  DataMerge.MergeFrom("C:\\Users\\Administrator\\documents\\netty\\netty\\nettyStat2.json",
                 "C:\\Users\\Administrator\\documents\\netty\\netty\\nettyCommitMessage.json");
         new ModificationCount().whoIsMostModified(gitCommits);
+        long before = System.currentTimeMillis();
+        FileGraph.valueOf(gitCommits);
+        long after = System.currentTimeMillis();
+        System.out.println(after - before);
+
+        //System.out.println(Graph.valueOf(gitCommits));
     }
 
 }

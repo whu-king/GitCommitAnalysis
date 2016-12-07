@@ -1,7 +1,7 @@
 package analysis;
 
-import model.FileChange;
-import model.GitCommit;
+import model.gitLog.FileChange;
+import model.gitLog.GitCommit;
 import utils.CollectionUtil;
 
 import java.util.HashMap;
@@ -40,6 +40,8 @@ public class ModificationCount {
     }
 
     private void countChangeOnFileFrom(FileChange change){
+        if(change.getDeletions().equalsIgnoreCase("0") &&
+                change.getInsertions().equalsIgnoreCase("0")) return;
         String name = change.getPath();
         if(modificationTimesStat.get(name) == null){
             modificationTimesStat.put(name,1);

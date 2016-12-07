@@ -30,4 +30,8 @@ public class GsonUtil {
         return Arrays.asList(array);
     }
 
+    public static String getJsonForm(Class<?> clazz, Object obj){
+        Gson gson = new Gson();
+         return gson.toJson(obj,clazz);
+    }
 }
