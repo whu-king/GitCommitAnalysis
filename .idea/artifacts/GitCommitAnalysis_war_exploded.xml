@@ -1,0 +1,23 @@
+<component name="ArtifactManager">
+  <artifact type="exploded-war" name="GitCommitAnalysis:war exploded">
+    <output-path>$PROJECT_DIR$/out/artifacts/GitCommitAnalysis_war_exploded</output-path>
+    <root id="root">
+      <element id="directory" name="WEB-INF">
+        <element id="directory" name="classes">
+          <element id="module-output" name="GitCommitAnalysis" />
+        </element>
+        <element id="directory" name="lib">
+          <element id="file-copy" path="$PROJECT_DIR$/lib/gson-2.2.2.jar" />
+          <element id="file-copy" path="$PROJECT_DIR$/lib/ezmorph-1.0.6.jar" />
+          <element id="file-copy" path="$PROJECT_DIR$/lib/commons-lang-2.6.jar" />
+          <element id="file-copy" path="$PROJECT_DIR$/lib/commons-beanutils.jar" />
+          <element id="file-copy" path="$PROJECT_DIR$/lib/json-lib-2.4-jdk15.jar" />
+          <element id="file-copy" path="$PROJECT_DIR$/lib/commons-logging-1.2.jar" />
+          <element id="file-copy" path="$PROJECT_DIR$/lib/commons-collections-3.1.jar" />
+          <element id="library" level="project" name="lib" />
+        </element>
+      </element>
+      <element id="javaee-facet-resources" facet="GitCommitAnalysis/web/Web" />
+    </root>
+  </artifact>
+</component>

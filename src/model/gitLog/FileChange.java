@@ -32,4 +32,15 @@ public  class FileChange {
     public void setPath(String path) {
         this.path = path;
     }
+
+    public boolean equals(Object o){
+        if(o == this) return true;
+        if(o.getClass() == FileChange.class){
+            FileChange tfc = (FileChange) o;
+            if(tfc.getPath().equalsIgnoreCase(this.path))
+                return true;
+        }
+        return false;
+    }
+
 }

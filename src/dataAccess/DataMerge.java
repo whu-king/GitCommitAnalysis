@@ -8,6 +8,7 @@ import model.gitLog.GitStat;
 import utils.FileOperation;
 import utils.GsonUtil;
 
+import java.io.IOException;
 import java.util.Date;
 import java.util.List;
 
@@ -48,14 +49,14 @@ public class DataMerge {
         return gitStats.get(index);
     }
 
-    public static void main(String[] args){
+    public static void main(String[] args) throws IOException {
         List<GitCommit> gitCommits =  DataMerge.MergeFrom("C:\\Users\\Administrator\\documents\\netty\\netty\\nettyStat2.json",
                 "C:\\Users\\Administrator\\documents\\netty\\netty\\nettyCommitMessage.json");
-        new ModificationCount().whoIsMostModified(gitCommits);
         long before = System.currentTimeMillis();
-        FileGraph.valueOf(gitCommits);
+        FileGraph fg = FileGraph.valueOf(gitCommits);
         long after = System.currentTimeMillis();
-        System.out.println(after - before);
+        System.out.println("transform gitCommits to fileGraph took time " + (after - before) + "ms");
+        fg.toJsonForD3(20);
 
         //System.out.println(Graph.valueOf(gitCommits));
     }
