@@ -23,4 +23,14 @@ public class FormatConversionUtil {
         cal.set(time[0],time[1],time[2],time[3],time[4],time[5]);
         return cal.getTime();
     }
+
+    public static int getInternalDaysOfTwo(Date fDate, Date oDate) {
+
+        Calendar aCalendar = Calendar.getInstance();
+        aCalendar.setTime(fDate);
+        int day1 = aCalendar.get(Calendar.DAY_OF_YEAR);
+        aCalendar.setTime(oDate);
+        int day2 = aCalendar.get(Calendar.DAY_OF_YEAR);
+        return day2 - day1;
+    }
 }

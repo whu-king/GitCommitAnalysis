@@ -1,6 +1,7 @@
 package dataAccess;
 
 import analysis.ModificationCount;
+import analysis.ViewDataPacker;
 import model.fileGraph.FileGraph;
 import model.fileGraph.Graph;
 import model.gitLog.GitCommit;
@@ -47,18 +48,6 @@ public class DataMerge {
 
     public static GitStat findByIndexFrom(List<GitStat> gitStats, int index){
         return gitStats.get(index);
-    }
-
-    public static void main(String[] args) throws IOException {
-        List<GitCommit> gitCommits =  DataMerge.MergeFrom("C:\\Users\\Administrator\\documents\\netty\\netty\\nettyStat2.json",
-                "C:\\Users\\Administrator\\documents\\netty\\netty\\nettyCommitMessage.json");
-        long before = System.currentTimeMillis();
-        FileGraph fg = FileGraph.valueOf(gitCommits);
-        long after = System.currentTimeMillis();
-        System.out.println("transform gitCommits to fileGraph took time " + (after - before) + "ms");
-        fg.toJsonForD3(20);
-
-        //System.out.println(Graph.valueOf(gitCommits));
     }
 
 }

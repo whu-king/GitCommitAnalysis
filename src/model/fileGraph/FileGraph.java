@@ -1,5 +1,6 @@
 package model.fileGraph;
 
+import analysis.EvaluateAlgorithm;
 import model.gitLog.FileChange;
 import model.gitLog.GitCommit;
 import utils.FormatConversionUtil;
@@ -15,8 +16,6 @@ import java.util.*;
  * Created by Administrator on 2016/12/7.
  */
 public class FileGraph extends Graph {
-
-
 
 
     public static FileGraph valueOf(List<GitCommit> gitCommits){
@@ -71,17 +70,21 @@ public class FileGraph extends Graph {
     private static Node newOrUpdateNode(FileGraph g, Date date, FileChange change) {
         if(change.getInsertions().equalsIgnoreCase("0") &&
                 change.getDeletions().equalsIgnoreCase("0")) return null;
+        if(change.getDeletions().equalsIgnoreCase("-") &&
+                change.getInsertions().equalsIgnoreCase("-")) return null;
         String path = change.getPath();
         Node node = g.findNodeByPath(path);
         if(node != null){
             CodeFile codeFile = node.getFile();
             codeFile.addUpdateDate(date);
+            codeFile.addCommitExtent(Integer.valueOf(change.getDeletions() + change.getInsertions()));
             codeFile.setCommitNum(codeFile.getCommitNum()+1);
         }else{
             node = new Node();
             CodeFile codeFile = new CodeFile(path);
             codeFile.setCommitNum(1);
             codeFile.addUpdateDate(date);
+            codeFile.addCommitExtent(Integer.valueOf(change.getDeletions() + change.getInsertions()));
             node.setFile(codeFile);
         }
         return node;
@@ -102,76 +105,7 @@ public class FileGraph extends Graph {
         return null;
     }
 
-    public void toJsonForD3(int minWeight) throws IOException {
 
-        String key = "src/main/java/io/netty/container/microcontainer/package-info.java";
-        Node node3 = nodes.get(key);
-        System.out.println(GsonUtil.getJsonForm(Node.class,node3));
-
-        for(Edge edge : edges.values()){
-            if(edge.getFirstNode().getFile().getFilePath().equalsIgnoreCase(key) ||
-                    edge.getSecondNode().getFile().getFilePath().equalsIgnoreCase(key)){
-                if(edge.getWeight() > 4)
-                System.out.println(GsonUtil.getJsonForm(Edge.class,edge));
-            }
-        }
-
-        Collection<Node> siftedNodes = new LinkedList<Node>();
-        Collection<Edge> siftedEdges = new LinkedList<Edge>();
-        for(Node node : nodes.values()){
-            if(node.getFile().getCommitNum() >= minWeight){
-                siftedNodes.add(node);
-            }
-        }
-
-        for(Edge edge : edges.values()){
-            if(edge.getWeight() >= minWeight){
-                siftedEdges.add(edge);
-            }
-        }
-        System.out.println("SiftedGraph : (>=" + minWeight +")");
-        System.out.println("Node num : " + siftedNodes.size());
-        System.out.println("Edge num : " + siftedEdges.size());
-
-        String path = "C:\\Users\\Administrator\\Documents\\GitCommitAnalysis\\web\\GraphJson.json";
-        try {
-            writeGraphJsonForD3IntoFile(path,siftedNodes,siftedEdges);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-
-    }
-
-    public void writeGraphJsonForD3IntoFile(String filePath, Collection<Node> nodes, Collection<Edge> edges) throws Exception {
-
-        File f = new File(filePath);
-        if(f.exists()) f.createNewFile();
-        BufferedWriter bw = new BufferedWriter(new FileWriter(f));
-
-        int count = 0;
-        int size = nodes.size();
-        bw.write("{ \"nodes\":[ \n");
-        for(Node node : nodes){
-            count++;
-            bw.write("{\"id\" : \"" +node.getFile().getFilePath() +  "\",\"group\":" + (count/1000 + 1) + "}");
-            if(count != size) bw.write(",\n");
-        }
-        bw.write("], \n \"links\" : [\n");
-        count = 0;
-
-        size = edges.size();
-
-        for(Edge edge : edges){
-            count++;
-            bw.write("{\"source\" : \"" + edge.getFirstNode().getFile().getFilePath() +
-                    "\",\"target\": \"" + edge.getSecondNode().getFile().getFilePath() + "\"," +
-                    " \"value\" : " + edge.getWeight() + "}");
-            if(count != size) bw.write(",\n");
-        }
-        bw.write("]}");
-        bw.close();
-    }
 
 
 

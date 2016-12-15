@@ -1,5 +1,9 @@
 package model.fileGraph;
 
+import sun.awt.image.ImageWatched;
+import utils.FormatConversionUtil;
+
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -10,11 +14,14 @@ import java.util.List;
 public class CodeFile {
 
     private final String filePath;
-    private List<Date> updateDate = new LinkedList<Date>();
-    private int age;
+    private List<Date> updateDate = new ArrayList<Date>();
+    private List<Integer> changeExtents = new ArrayList<Integer>();
+//    private int age;
     private int commitNum;
     private int rowNum;
     private int bugFixInvolvedNum;
+    private List<String> codeWorkers = new LinkedList<String>();
+    private double risk;
 
     public CodeFile(String path){
         this.filePath = path;
@@ -66,11 +73,9 @@ public class CodeFile {
     }
 
     public int getAge() {
-        return age;
-    }
-
-    public void setAge(int age) {
-        this.age = age;
+        Date nowDate = new Date(System.currentTimeMillis());
+        // the commit is order by time Dec
+        return FormatConversionUtil.getInternalDaysOfTwo(updateDate.get(updateDate.size() - 1),nowDate);
     }
 
     public int getCommitNum() {
@@ -87,5 +92,33 @@ public class CodeFile {
 
     public void setRowNum(int rowNum) {
         this.rowNum = rowNum;
+    }
+
+    public List<String> getCodeWorkers() {
+        return codeWorkers;
+    }
+
+    public void setCodeWorkers(List<String> codeWorkers) {
+        this.codeWorkers = codeWorkers;
+    }
+
+    public double getRisk() {
+        return risk;
+    }
+
+    public void setRisk(double risk) {
+        this.risk = risk;
+    }
+
+    public List<Integer> getChangeExtents() {
+        return changeExtents;
+    }
+
+    public void setChangeExtents(List<Integer> changeExtents) {
+        this.changeExtents = changeExtents;
+    }
+
+    public void addCommitExtent(int i){
+        changeExtents.add(i);
     }
 }

@@ -53,4 +53,20 @@ public class Graph {
     public void setId(long id) {
         this.id = id;
     }
+
+    public Map<String, Edge> getEdges() {
+        return edges;
+    }
+
+    public void setEdges(Map<String, Edge> edges) {
+        this.edges = edges;
+    }
+
+    public Map<String, Node> getNodes() {
+        return nodes;
+    }
+
+    public void setNodes(Map<String, Node> nodes) {
+        this.nodes = nodes;
+    }
 }
