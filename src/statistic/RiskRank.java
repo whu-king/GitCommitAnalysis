@@ -14,7 +14,12 @@ import java.util.Map;
  */
 public class RiskRank {
 
-    public static void doRank(FileGraph g){
+    private FileGraph g;
+    public RiskRank(FileGraph g){
+        this.g = g;
+    }
+
+    public  void doRank(){
         Map<String,String> mapForSort = new LinkedHashMap<String, String>();
         RiskEvaluateAlgorithm ea = new XieEvaluateAlgorithm();
 

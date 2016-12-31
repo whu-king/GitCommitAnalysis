@@ -5,7 +5,8 @@
     <package name="com.gitCommitAnalysis.struts2" extends="struts-default" >
 
         <action name="getCouplingMeasure" class="actions.getCouplingMeasureAction">
-
+        </action>
+        <action name="getCommitSizeTimeView" class="actions.getCommitSizeTimeViewAction">
         </action>
         <action name="getOverallView" class="actions.getOverAllViewAction">
             <result name="success" type="redirect">graphExample.html</result>

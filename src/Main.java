@@ -1,3 +1,4 @@
+import statistic.CommitSizeAnalyzer;
 import viewAdapter.ViewDataPacker;
 import dataAccess.DataMerge;
 import model.fileGraph.FileGraph;
@@ -16,11 +17,12 @@ public class Main {
         List<GitCommit> gitCommits =  DataMerge.MergeFrom("C:\\Users\\Administrator\\documents\\netty\\netty\\nettyStat2.json",
                 "C:\\Users\\Administrator\\documents\\netty\\netty\\nettyCommitMessage.json");
         long before = System.currentTimeMillis();
-        FileGraph fg = FileGraph.valueOf(gitCommits);
-        RiskRank.doRank(fg);
-        long after = System.currentTimeMillis();
-        System.out.println("transform gitCommits to fileGraph took time " + (after - before) + "ms");
-        ViewDataPacker viewDataPacker = new ViewDataPacker(fg);
-        viewDataPacker.GetJsonForD3WithRange(10,100);
+//        FileGraph fg = FileGraph.valueOf(gitCommits);
+        new CommitSizeAnalyzer(gitCommits).relateSizeAndTime();
+//        new RiskRank(fg).doRank();
+//        long after = System.currentTimeMillis();
+//        System.out.println("transform gitCommits to fileGraph took time " + (after - before) + "ms");
+//        ViewDataPacker viewDataPacker = new ViewDataPacker(fg);
+//        viewDataPacker.GetJsonForD3WithRange(10,100);
     }
 }
