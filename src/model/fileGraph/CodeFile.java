@@ -1,6 +1,6 @@
 package model.fileGraph;
 
-import sun.awt.image.ImageWatched;
+import model.gitLog.GitCommit;
 import utils.FormatConversionUtil;
 
 import java.util.ArrayList;
@@ -14,22 +14,29 @@ import java.util.List;
 public class CodeFile {
 
     private final String filePath;
-    private List<Date> updateDate = new ArrayList<Date>();
-    private List<Integer> changeExtents = new ArrayList<Integer>();
-//    private int age;
     private int commitNum;
     private int rowNum;
-    private int bugFixInvolvedNum;
-    private List<String> codeWorkers = new LinkedList<String>();
     private double risk;
+//    private int bugFixInvolvedNum;
+//    private int age;
+    private List<Date> updateDateOfBug = new ArrayList<Date>();
+    private List<Integer> changeExtentsInBugFix = new ArrayList<Integer>();
+    private List<String> codeWorkers = new LinkedList<String>();
+    private List<GitCommit> changeLog = new ArrayList<GitCommit>();
 
     public CodeFile(String path){
         this.filePath = path;
     }
 
     public void addUpdateDate(Date date){
-        if(updateDate != null){
-            updateDate.add(date);
+        if(updateDateOfBug != null){
+            updateDateOfBug.add(date);
+        }
+    }
+
+    public void addChangeCommit(GitCommit gitCommit){
+        if(changeLog != null){
+            changeLog.add(gitCommit);
         }
     }
 
@@ -51,31 +58,25 @@ public class CodeFile {
     }
 
     public int getBugFixInvolvedNum() {
-        return bugFixInvolvedNum;
-    }
-
-    public void setBugFixInvolvedNum(int bugFixInvolvedNum) {
-        this.bugFixInvolvedNum = bugFixInvolvedNum;
+        return changeExtentsInBugFix.size();
     }
 
     public String getFilePath() {
         return filePath;
     }
 
-
-
-    public List<Date> getUpdateDate() {
-        return updateDate;
+    public List<Date> getUpdateDateOfBug() {
+        return updateDateOfBug;
     }
 
-    public void setUpdateDate(List<Date> updateDate) {
-        this.updateDate = updateDate;
+    public void setUpdateDateOfBug(List<Date> updateDateOfBug) {
+        this.updateDateOfBug = updateDateOfBug;
     }
 
     public int getAge() {
         Date nowDate = new Date(System.currentTimeMillis());
         // the commit is order by time Dec
-        return FormatConversionUtil.getInternalDaysOfTwo(updateDate.get(updateDate.size() - 1),nowDate);
+        return FormatConversionUtil.getInternalDaysOfTwo(updateDateOfBug.get(updateDateOfBug.size() - 1),nowDate);
     }
 
     public int getCommitNum() {
@@ -110,15 +111,23 @@ public class CodeFile {
         this.risk = risk;
     }
 
-    public List<Integer> getChangeExtents() {
-        return changeExtents;
+    public List<Integer> getChangeExtentsInBugFix() {
+        return changeExtentsInBugFix;
     }
 
-    public void setChangeExtents(List<Integer> changeExtents) {
-        this.changeExtents = changeExtents;
+    public void setChangeExtentsInBugFix(List<Integer> changeExtentsInBugFix) {
+        this.changeExtentsInBugFix = changeExtentsInBugFix;
     }
 
     public void addCommitExtent(int i){
-        changeExtents.add(i);
+        changeExtentsInBugFix.add(i);
+    }
+
+    public List<GitCommit> getChangeLog() {
+        return changeLog;
+    }
+
+    public void setChangeLog(List<GitCommit> changeLog) {
+        this.changeLog = changeLog;
     }
 }

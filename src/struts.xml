@@ -1,0 +1,14 @@
+<!DOCTYPE struts PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN" "http://struts.apache.org/dtds/struts-2.0.dtd" >
+<struts>
+
+    <constant name="struts.devMode" value="true"/>
+    <package name="com.gitCommitAnalysis.struts2" extends="struts-default" >
+
+        <action name="getCouplingMeasure" class="actions.getCouplingMeasureAction">
+
+        </action>
+        <action name="getOverallView" class="actions.getOverAllViewAction">
+            <result name="success" type="redirect">graphExample.html</result>
+        </action>
+    </package>
+</struts>

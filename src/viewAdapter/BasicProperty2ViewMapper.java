@@ -1,5 +1,7 @@
-package analysis;
+package viewAdapter;
 
+import analysis.RiskEvaluateAlgorithm;
+import analysis.XieEvaluateAlgorithm;
 import model.fileGraph.Edge;
 import model.fileGraph.Node;
 
@@ -8,7 +10,7 @@ import model.fileGraph.Node;
  */
 public class BasicProperty2ViewMapper implements Property2ViewMapper {
 
-    EvaluateAlgorithm evaluateAlgorithm = new XieEvaluateAlgorithm();
+    RiskEvaluateAlgorithm evaluateAlgorithm = new XieEvaluateAlgorithm();
 
     @Override
     public double getRadiusFrom(Node node) {
@@ -20,11 +22,8 @@ public class BasicProperty2ViewMapper implements Property2ViewMapper {
     @Override
     public double getColorValueFrom(Node node) {
         double risk = evaluateAlgorithm.getFileRisk(node.getFile());
-        if( -50 < risk && risk < 0) return 5;
-        if(-100 < risk && risk < -50) return 4;
-        if(-200 < risk && risk < -100) return 3;
-        if(-400 < risk && risk < -200) return 2;
-        else return 1;
+        if(risk > 1000 ) return 1000;
+        else return risk;
     }
 
     @Override

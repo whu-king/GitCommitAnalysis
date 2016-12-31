@@ -1,8 +1,9 @@
-package analysis;
+package viewAdapter;
 
 import model.fileGraph.Edge;
 import model.fileGraph.FileGraph;
 import model.fileGraph.Node;
+import utils.FileOperation;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -24,7 +25,7 @@ public class ViewDataPacker {
         this.fg = fg;
     }
 
-    public void GetJsonForD3WithRange( int minWeight,int maxWeight) throws IOException {
+    public long GetJsonForD3WithRange( int minWeight,int maxWeight) throws IOException {
 
         Map<String,Node> nodes = fg.getNodes();
         Map<String,Edge> edges = fg.getEdges();
@@ -47,20 +48,24 @@ public class ViewDataPacker {
         System.out.println("Node num : " + siftedNodes.size());
         System.out.println("Edge num : " + siftedEdges.size());
 
-        String path = "C:\\Users\\Administrator\\Documents\\GitCommitAnalysis\\web\\GraphJson.json";
+        String dirPath = "C:\\Users\\Administrator\\Documents\\GitCommitAnalysis\\web\\temp";
+        int randomNum = (int)(Math.random()*9 + 1) * 100000;
+        String filePath = dirPath + "\\GraphJson" + ".json";
+        new File(filePath).createNewFile();
         try {
-            writeGraphJsonForD3IntoFile(path,siftedNodes,siftedEdges);
+            writeGraphJsonForD3IntoFile(filePath,siftedNodes,siftedEdges);
         } catch (Exception e) {
             e.printStackTrace();
         }
-
+        return randomNum;
 
     }
+
 
     public void writeGraphJsonForD3IntoFile(String filePath, Collection<Node> nodes, Collection<Edge> edges) throws Exception {
 
         File f = new File(filePath);
-        if(f.exists()) f.createNewFile();
+        f.createNewFile();
         BufferedWriter bw = new BufferedWriter(new FileWriter(f));
 
         int count = 0;
@@ -86,5 +91,6 @@ public class ViewDataPacker {
         }
         bw.write("]}");
         bw.close();
+        System.out.println("GraphJsonFile is done");
     }
 }

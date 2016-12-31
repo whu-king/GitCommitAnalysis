@@ -1,111 +1,233 @@
 <!DOCTYPE html>
 <meta charset="utf-8">
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-cache">
+<META HTTP-EQUIV="Expires" CONTENT="0">
+
+
+<script>
+    function changeThreshold(){
+        var eventInfo = dialog({
+            title: 'Change Co-Change Threshold',
+            content: '<p>downThreshold:</p><input id="downT"  value="" /><br>' +
+            '<p>upThreshold:</p><input id="upT"  value="" /><br>',
+            ok: function () {
+
+                var downThreshold = $('#downT').val();
+                var upThreshold = $('#upT').val();
+                var thresholdJson = {
+                    "downThreshold": downThreshold,
+                    "upThreshold": upThreshold
+                }
+
+                $.get(
+                        "getOverallView",
+                        thresholdJson,
+                        function () {
+                            var tip = dialog(
+                                    {content : 'success',
+                                     ok:function(){
+                                         $.getJSON("css\\GraphJson.json");
+                                         window.location.reload();
+                                     }}
+                            );
+                            tip.show();
+                        },
+                        "text"
+                );
+            },
+            okValue: 'submit'}
+        );
+        eventInfo.show();
+    }
+</script>
 <style>
 
-    .links line {
+     .ordinaryLine {
         stroke: #999;
         stroke-opacity: 0.6;
     }
 
-    .nodes circle {
-        stroke: #fff;
-        stroke-width: 1.5px;
-    }
-
 </style>
+<div>
+    <P class="button white" onclick="changeThreshold();">Change Co-change Threshold</P>
+</div>
 <svg width="1400" height="1400"></svg>
+<link rel="stylesheet" type="text/css" href="css/ui-dialog.css"/>
+<link rel="stylesheet" type="text/css" href="css/button.css"/>
 <script src="js/d3.js"></script>
+<script src="js/jquery-3.0.0.min.js"></script>
+<script src="js/dialog-min.js"/>
+
 <script>
 
+</script>
+<script>
+
+    //Json文件更新后，需要重新加载才能识别
+//    window.location.reload();
+    draw("css\\GraphJson.json");
+    function draw(dataFile) {
+        d3.select("svg").selectAll("g").remove();
+        var svg = d3.select("svg"),
+                width = +svg.attr("width"),
+                height = +svg.attr("height");
+
+        var dangerColorScale = d3.scaleLinear()
+                .domain([0, 1000])
+                .range(["green", "red"]);
+
+        var color = d3.scaleOrdinal(d3.schemeCategory20);
+
+        var simulation = d3.forceSimulation()
+                .force("link", d3.forceLink()
+                        .id(function (d) {
+                            return d.id;
+                        })
+                        .distance(function (l) {
+                            return l.length
+                        })
+        )
+                .force("charge", d3.forceManyBody()
+                        .strength(-40)
+                        .distanceMax(500))//微小的排斥力
+                .force("collision", d3.forceCollide()
+                        .radius(function (d) {
+                            return d.radius;
+                        }))
+                .force("center", d3.forceCenter(width / 2, height / 2));//设置视角中心
+
+        d3.json(dataFile, function (error, graph) {
+            if (error) throw error;
+
+            var link = svg.append("g")
+                    .selectAll("line")
+                    .data(graph.links)
+                    .enter().append("line")
+                    .attr("class", "ordinaryLine");
 
 
-    var svg = d3.select("svg"),
-            width = +svg.attr("width"),
-            height = +svg.attr("height");
+            var node = svg.append("g")
+                    .selectAll("circle")
+                    .data(graph.nodes)
+                    .enter().append("circle")
+                    .style("stroke-width", "1.5px")
+                    .style("stroke", "fff")
+                    .attr("r", function (d) {
+                        return d.radius;
+                    })
+                    .attr("fill", function (d) {
+                        return dangerColorScale(d.color);
+                    })
+                    .call(d3.drag()
+                            .on("start", dragstarted)
+                            .on("drag", dragged)
+                            .on("end", dragended));
 
-    var dangerColorScale = d3.scaleLinear()
-                            .domain([1,5])
-                            .range(["green","red"]);
+            node.on("click.node", nodeClicked);
+            node.append("title")
+                    .text(function (d) {
+                        return d.id;
+                    });
 
-    var color = d3.scaleOrdinal(d3.schemeCategory20);
+            simulation
+                    .nodes(graph.nodes)
+                    .on("tick", ticked);
 
-    var simulation = d3.forceSimulation()
-            .force("link", d3.forceLink()
-                    .id(function(d) { return d.id; })
-                    .distance(function(l){return l.length})//权重越大，边距越短
-                    )
-            .force("charge", d3.forceManyBody()
-                    .strength(-15))//微小的排斥力
-            .force("collision",d3.forceCollide()
-                    .radius(function(d){return d.radius;}))
-            .force("center", d3.forceCenter(width / 2, height / 2));//设置视角中心
+            simulation.force("link")
+                    .links(graph.links);
 
-    d3.json("GraphJson.json", function(error, graph) {
-        if (error) throw error;
 
-        var link = svg.append("g")
-                .attr("class", "links")
-                .selectAll("line")
-                .data(graph.links)
-                .enter().append("line");
-//                .attr("stroke-width", function(d) { return Math.sqrt(d.value); });
+            function nodeClicked(d) {
 
-        var node = svg.append("g")
-                .attr("class", "nodes")
-                .selectAll("circle")
-                .data(graph.nodes)
-                .enter().append("circle")
-                .attr("r", function(d){return d.radius;})
-                .attr("fill", function(d) {  return dangerColorScale(d.color);})
-                .call(d3.drag()
-                        .on("start", dragstarted)
-                        .on("drag", dragged)
-                        .on("end", dragended));
+//            alert("[" + d.x + "," + d.y + "]");
+                var nodeName = d.id;
+                console.log(nodeName);
+                alert(nodeName);
+                var highlightNodes = new Array();
+                highlightNodes.push(nodeName);
 
-        node.append("title")
-                .text(function(d) { return d.id; });
+                //放大局部
+                simulation.force("charge", d3.forceManyBody()
+                        .strength(-300)
+                        .distanceMax(2500));
+                svg.attr("width", width * 3);
+                svg.attr("height", height * 3);
 
-        simulation
-                .nodes(graph.nodes)
-                .on("tick", ticked);
+                //高亮耦合线条和结点
+                svg.selectAll("line").style("stroke-width", "1px").style("stroke", "999");
+                svg.selectAll("circle").style("stroke-width", "1.5px").style("stroke", "fff");
 
-        simulation.force("link")
-                .links(graph.links);
+                svg.selectAll("line").filter(function (l) {
+                    if (l.source.id == nodeName) {
+                        highlightNodes.push(l.target.id);
+                        return true;
+                    } else if (l.target.id == nodeName) {
+                        highlightNodes.push(l.source.id);
+                        return true;
+                    }
+                    return false;
+                }).style("stroke-width", "10px").style("stroke", "333399").transition();
 
-        function ticked() {
-            link
-                    .attr("x1", function(d) { return d.source.x; })
-                    .attr("y1", function(d) { return d.source.y; })
-                    .attr("x2", function(d) { return d.target.x; })
-                    .attr("y2", function(d) { return d.target.y; });
+                svg.selectAll("circle").filter(function (d) {
+                    var index = jQuery.inArray(d.id, highlightNodes);
+                    if (index !== -1) {
+                        return true
+                    }
+                    ;
+                    return false;
+                }).style("stroke-width", "5px").style("stroke", "333399").style("stroke-opacity", "0.7").transition();
 
-            node
-                    .attr("cx", function(d) { return d.x; })
-                    .attr("cy", function(d) { return d.y; });
+
+            }
+
+            function ticked() {
+                link
+                        .attr("x1", function (d) {
+                            return d.source.x;
+                        })
+                        .attr("y1", function (d) {
+                            return d.source.y;
+                        })
+                        .attr("x2", function (d) {
+                            return d.target.x;
+                        })
+                        .attr("y2", function (d) {
+                            return d.target.y;
+                        });
+
+                node
+                        .attr("cx", function (d) {
+                            return d.x;
+                        })
+                        .attr("cy", function (d) {
+                            return d.y;
+                        });
+
+            }
+        });
+
+
+        function dragstarted(d) {
+            if (!d3.event.active) simulation.alphaTarget(0.3).restart();
+            d.fx = d.x;
+            d.fy = d.y;
+        }
+
+        function dragged(d) {
+            d.fx = d3.event.x;
+            d.fy = d3.event.y;
+            if (d.fx > svg.attr("width")) svg.attr("width", d.fx + 20);
+            if (d.fx < 0) d.fx = 10;
+            if (d.fy > svg.attr("height")) svg.attr("height", d.fy + 20);
+            if (d.fy < 0) d.fy = 10;
 
         }
-    });
 
-    function dragstarted(d) {
-        if (!d3.event.active) simulation.alphaTarget(0.3).restart();
-        d.fx = d.x;
-        d.fy = d.y;
+        function dragended(d) {
+            if (!d3.event.active) simulation.alphaTarget(0);
+            d.fx = null;
+            d.fy = null;
+        }
     }
-
-    function dragged(d) {
-        d.fx = d3.event.x;
-        d.fy = d3.event.y;
-        if(d.fx > svg.attr("width") ) svg.attr("width", d.fx + 20);
-        if(d.fx < 0 ) d.fx = 10;
-        if(d.fy > svg.attr("height")) svg.attr("height", d.fy + 20);
-        if(d.fy < 0) d.fy = 10;
-
-    }
-
-    function dragended(d) {
-        if (!d3.event.active) simulation.alphaTarget(0);
-        d.fx = null;
-        d.fy = null;
-    }
-
 </script>

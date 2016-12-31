@@ -1,7 +1,8 @@
-import analysis.ViewDataPacker;
+import viewAdapter.ViewDataPacker;
 import dataAccess.DataMerge;
 import model.fileGraph.FileGraph;
 import model.gitLog.GitCommit;
+import statistic.RiskRank;
 
 import java.io.IOException;
 import java.util.List;
@@ -16,7 +17,7 @@ public class Main {
                 "C:\\Users\\Administrator\\documents\\netty\\netty\\nettyCommitMessage.json");
         long before = System.currentTimeMillis();
         FileGraph fg = FileGraph.valueOf(gitCommits);
-//        new ModificationCount().whoIsMostModified(gitCommits);
+        RiskRank.doRank(fg);
         long after = System.currentTimeMillis();
         System.out.println("transform gitCommits to fileGraph took time " + (after - before) + "ms");
         ViewDataPacker viewDataPacker = new ViewDataPacker(fg);

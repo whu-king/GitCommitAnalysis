@@ -1,8 +1,5 @@
 package model.fileGraph;
 
-import model.gitLog.FileChange;
-import model.gitLog.GitCommit;
-import utils.FormatConversionUtil;
 import utils.GsonUtil;
 
 import java.util.*;
@@ -29,11 +26,11 @@ public class Graph {
         System.out.println("Node : " + "\n");
         for(Map.Entry<String,Node> entry : nodes.entrySet()){
             Node n = entry.getValue();
-            System.out.println(GsonUtil.getJsonForm(Node.class, n) + "\n");
+            System.out.println(GsonUtil.getJsonFrom(Node.class, n) + "\n");
         }
         for(Map.Entry<String,Edge> entry : edges.entrySet()){
             Edge e = entry.getValue();
-            System.out.println(GsonUtil.getJsonForm(Edge.class,e) + "\n");
+            System.out.println(GsonUtil.getJsonFrom(Edge.class, e) + "\n");
         }
     }
 

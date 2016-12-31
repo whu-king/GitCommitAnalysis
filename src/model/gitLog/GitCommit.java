@@ -1,5 +1,8 @@
 package model.gitLog;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 /**
  * Created by Administrator on 2016/12/1.
  */
@@ -49,5 +52,14 @@ public class GitCommit {
 
     public void setMessage(String message) {
         this.message = message;
+    }
+
+    public boolean isBugCommit() {
+
+        String regex = ".*(bug|fix|err|fail|leak).*";
+        Pattern bug = Pattern.compile(regex,Pattern.CASE_INSENSITIVE);
+        Matcher m = bug.matcher(message);
+        if(m.find()) return true;
+        return false;
     }
 }

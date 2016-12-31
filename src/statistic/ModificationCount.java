@@ -1,4 +1,4 @@
-package analysis;
+package statistic;
 
 import model.gitLog.FileChange;
 import model.gitLog.GitCommit;

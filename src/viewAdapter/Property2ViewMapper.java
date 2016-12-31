@@ -1,4 +1,4 @@
-package analysis;
+package viewAdapter;
 
 import model.fileGraph.Edge;
 import model.fileGraph.Node;

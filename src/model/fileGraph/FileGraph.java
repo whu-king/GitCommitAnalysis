@@ -1,15 +1,9 @@
 package model.fileGraph;
 
-import analysis.EvaluateAlgorithm;
 import model.gitLog.FileChange;
 import model.gitLog.GitCommit;
 import utils.FormatConversionUtil;
-import utils.GsonUtil;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.util.*;
 
 /**
@@ -18,36 +12,44 @@ import java.util.*;
 public class FileGraph extends Graph {
 
 
-    public static FileGraph valueOf(List<GitCommit> gitCommits){
+    public static FileGraph valueOf(List<GitCommit> gitCommits) {
         FileGraph g = new FileGraph();
 
-        for(GitCommit gitCommit : gitCommits){
+        for (GitCommit gitCommit : gitCommits) {
             String dateString = gitCommit.getDate();
             Date date = FormatConversionUtil.getDateFromString(dateString);
             List<Node> appearTogether = new ArrayList<Node>();
-
-
             List<FileChange> diffs = gitCommit.getFileDiff().getDiffs();
-            diffs = checkDuplicateCommit(diffs);
-            for(FileChange change : diffs){
+//            diffs = checkEmptyOperation(diffs);
+            boolean isBugCommit = gitCommit.isBugCommit();
+            for (FileChange change : diffs) {
                 Node node = newOrUpdateNode(g, date, change);
                 if (node == null) continue;
+
+                CodeFile codeFile = node.getFile();
+                if (isBugCommit) {
+                    codeFile.addCommitExtent(Integer.valueOf(change.getDeletions())
+                            + Integer.valueOf(change.getInsertions()));
+                    codeFile.addUpdateDate(date);
+                }
+                codeFile.addChangeCommit(gitCommit);
                 appearTogether.add(node);
                 g.addNode(node);
+
             }
 
-            //the codeFile is listed By ABC oder, or else edge weight is wrong
-            for(int i = 0; i < appearTogether.size(); i++){
-                for(int j = i+1; j < appearTogether.size(); j++){
+            //the codeFile is listed By ABC oder, or else edge weight is wrong.no situation like A-B:2 B-A:3
+            for (int i = 0; i < appearTogether.size(); i++) {
+                for (int j = i + 1; j < appearTogether.size(); j++) {
                     Edge tEdge = new Edge();
                     tEdge.setFirstNode(appearTogether.get(i));
                     tEdge.setSecondNode(appearTogether.get(j));
                     Edge edge = g.findEdgeByEdge(tEdge);
-                    if(edge == null){
+                    if (edge == null) {
                         tEdge.setWeight(1);
                         edge = tEdge;
-                    }else{
-                        edge.setWeight(edge.getWeight()+1);
+                    } else {
+                        edge.setWeight(edge.getWeight() + 1);
                     }
                     g.addEdge(edge);
                 }
@@ -56,57 +58,54 @@ public class FileGraph extends Graph {
         return g;
     }
 
-    private static List<FileChange> checkDuplicateCommit(List<FileChange> diffs) {
-
-
-        List<FileChange> newDiff = new LinkedList<FileChange>();
-        for(FileChange fc : diffs){
-            if(newDiff.contains(fc)) continue;
-            newDiff.add(fc);
-        }
-        return newDiff;
-    }
-
     private static Node newOrUpdateNode(FileGraph g, Date date, FileChange change) {
-        if(change.getInsertions().equalsIgnoreCase("0") &&
-                change.getDeletions().equalsIgnoreCase("0")) return null;
-        if(change.getDeletions().equalsIgnoreCase("-") &&
-                change.getInsertions().equalsIgnoreCase("-")) return null;
+
         String path = change.getPath();
         Node node = g.findNodeByPath(path);
-        if(node != null){
-            CodeFile codeFile = node.getFile();
-            codeFile.addUpdateDate(date);
-            codeFile.addCommitExtent(Integer.valueOf(change.getDeletions() + change.getInsertions()));
-            codeFile.setCommitNum(codeFile.getCommitNum()+1);
-        }else{
+        CodeFile codeFile;
+        if (node != null) {
+            codeFile = node.getFile();
+            codeFile.setCommitNum(codeFile.getCommitNum() + 1);
+        } else {
             node = new Node();
-            CodeFile codeFile = new CodeFile(path);
+            codeFile = new CodeFile(path);
             codeFile.setCommitNum(1);
-            codeFile.addUpdateDate(date);
-            codeFile.addCommitExtent(Integer.valueOf(change.getDeletions() + change.getInsertions()));
             node.setFile(codeFile);
         }
         return node;
     }
 
-    public Node findNodeByPath(String path){
-        if(this.nodes.containsKey(path)){
+    public Node findNodeByPath(String path) {
+        if (this.nodes.containsKey(path)) {
             return this.nodes.get(path);
-        };
+        }
+        ;
         return null;
     }
 
-    public Edge findEdgeByEdge(Edge edge){
+    public Edge findEdgeByEdge(Edge edge) {
         String path2 = edge.getFirstNode().getFile().getFilePath() + edge.getSecondNode().getFile().getFilePath();
-        if(this.edges.containsKey(path2)){
+        if (this.edges.containsKey(path2)) {
             return this.edges.get(path2);
         }
         return null;
     }
 
+    public Edge findEdgeByNode(Node n1, Node n2) {
+        String path = n1.getFile().getFilePath() + n2.getFile().getFilePath();
+        String path2 = n2.getFile().getFilePath() + n1.getFile().getFilePath();
+        return findEdgeByString(path, path2);
+    }
 
-
+    public Edge findEdgeByString(String path1, String path2) {
+        String key1 = path1 + path2;
+        String key2 = path2 + path1;
+        if (this.edges.containsKey(key1))
+            return this.edges.get(key1);
+        if (this.edges.containsKey(key2))
+            return this.edges.get(key2);
+        return null;
+    }
 
 
 }
