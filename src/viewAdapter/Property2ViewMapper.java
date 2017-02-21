@@ -14,4 +14,8 @@ public interface Property2ViewMapper {
     double getColorValueFrom(Node node);
 
     double getLengthFrom(Edge edge);
+
+    String getStrokeWidth(Node node);
+
+    String getStrokeColor(Node node);
 }

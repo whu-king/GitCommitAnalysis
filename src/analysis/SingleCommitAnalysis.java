@@ -81,6 +81,12 @@ public class SingleCommitAnalysis {
         }
 
         System.out.println("Impact : " + impact);
+
+        for(Node node : certainGraph.getNodes().values()){
+            String filepath = node.getFile().getFilePath();
+            if(commitFiles.contains(filepath)) node.setRank(1);
+            else if(firstCoupledFiles.contains(filepath)) node.setRank(2);
+        }
         return certainGraph;
     }
 

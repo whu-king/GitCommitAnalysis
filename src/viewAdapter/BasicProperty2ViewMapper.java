@@ -31,4 +31,24 @@ public class BasicProperty2ViewMapper implements Property2ViewMapper {
         //todo more dynamic
         return 60 - edge.getWeight()/3;
     }
+
+    @Override
+    public String getStrokeWidth(Node node) {
+        switch ((int)node.getRank()){
+            case 0 : return "1.5";
+            case 1 : return "10";
+            case 2 : return "5";
+            default: return "1.5";
+        }
+    }
+
+    @Override
+    public String getStrokeColor(Node node) {
+        switch ((int)node.getRank()){
+            case 0 : return "ffd";//white
+            case 1 : return "000";//black
+            case 2 : return "ccff99";//green
+            default: return "#FFA500";
+        }
+    }
 }

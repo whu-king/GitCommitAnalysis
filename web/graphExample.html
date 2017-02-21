@@ -146,8 +146,12 @@
                     .selectAll("circle")
                     .data(graph.nodes)
                     .enter().append("circle")
-                    .style("stroke-width", "1.5px")
-                    .style("stroke", "fff")
+                    .style("stroke-width", function(d){
+                        return d.strokeWidth + "px"
+                    })
+                    .style("stroke", function(d){
+                        return d.strokeColor + "";
+                    })
                     .attr("r", function (d) {
                         return d.radius;
                     })
@@ -191,7 +195,12 @@
 
                 //高亮耦合线条和结点
                 svg.selectAll("line").style("stroke-width", "1px").style("stroke", "999");
-                svg.selectAll("circle").style("stroke-width", "1.5px").style("stroke", "fff");
+                svg.selectAll("circle")
+                        .style("stroke-width", function(d){
+                            return d.strokeWidth + "px"
+                        }).style("stroke", function(d){
+                            return d.strokeColor + "";
+                        });
 
                 svg.selectAll("line").filter(function (l) {
                     if (l.source.id == nodeName) {

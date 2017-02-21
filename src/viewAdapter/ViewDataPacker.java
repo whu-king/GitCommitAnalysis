@@ -50,6 +50,8 @@ public class ViewDataPacker {
 
         String dirPath = "C:\\Users\\Administrator\\Documents\\GitCommitAnalysis\\web\\temp";
         int randomNum = (int)(Math.random()*9 + 1) * 100000;
+
+        //todo more dynamic data transport
         String filePath = dirPath + "\\GraphJson" + ".json";
         new File(filePath).createNewFile();
         try {
@@ -74,7 +76,9 @@ public class ViewDataPacker {
         for(Node node : nodes){
             count++;
             bw.write("{\"id\" : \"" +node.getFile().getFilePath() +  "\",\"radius\":" + p2v.getRadiusFrom(node) +
-                    ", \"color\":" + p2v.getColorValueFrom(node) + "}");
+                    ", \"color\":" + p2v.getColorValueFrom(node) +
+                    ", \"strokeWidth\":" + p2v.getStrokeWidth(node) +
+                    ", \"strokeColor\": \"" + p2v.getStrokeColor(node) + "\"}");
             if(count != size) bw.write(",\n");
         }
         bw.write("], \n \"links\" : [\n");

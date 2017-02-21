@@ -6,6 +6,7 @@ package model.fileGraph;
 public class Node {
 
     private long id;
+    private long rank = 0;
     private CodeFile file;
 
     public Node(){}
@@ -27,5 +28,13 @@ public class Node {
 
     public void setFile(CodeFile file) {
         this.file = file;
+    }
+
+    public long getRank() {
+        return rank;
+    }
+
+    public void setRank(long rank) {
+        this.rank = rank;
     }
 }
