@@ -11,5 +11,9 @@
         <action name="getOverallView" class="actions.getOverAllViewAction">
             <result name="success" type="redirect">graphExample.html</result>
         </action>
+
+        <action name="getCommitRelated" class="actions.getCommitRelatedGraph">
+            <result name="success" type="redirect">graphExample.html</result>
+        </action>
     </package>
 </struts>

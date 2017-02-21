@@ -1,33 +1,34 @@
 package actions;
 
 import com.opensymphony.xwork2.ActionContext;
-import com.opensymphony.xwork2.ActionSupport;
-import dataAccess.DataMerge;
+import dataAccess.DataMergeFromAllCommit;
+import dataAccess.DataMergeFromCurrentFiles;
 import model.fileGraph.FileGraph;
 import model.gitLog.GitCommit;
-import org.apache.struts2.ServletActionContext;
-import statistic.RiskRank;
+
 import viewAdapter.ViewDataPacker;
 
-import javax.servlet.http.HttpServletResponse;
-import java.awt.*;
 import java.io.IOException;
-import java.util.*;
+import java.util.List;
 
 /**
  * Created by Administrator on 2016/12/29.
  */
 public class getOverAllViewAction {
 
-    private int downThreshold ;
-    private int upThreshold = 100;
+    private int downThreshold = DefaultConfigure.DEFAULT_DOWN_THRESHOLD ;
+    private int upThreshold = DefaultConfigure.DEFAULT_UP_THRESHOLD;
 
     public String execute(){
-        java.util.List<GitCommit> gitCommits =  DataMerge.MergeFrom("C:\\Users\\Administrator\\documents\\netty\\netty\\nettyStat2.json",
-                "C:\\Users\\Administrator\\documents\\netty\\netty\\nettyCommitMessage.json");
+
+        DataMergeFromCurrentFiles dmfcf = new DataMergeFromCurrentFiles();
+        dmfcf.setProjectDir("C:\\Users\\Administrator\\Documents\\netty\\netty");
+        dmfcf.setGitStatPath("C:\\Users\\Administrator\\documents\\netty\\data\\nettyStat2.json");
+        dmfcf.setGitCommitMessage("C:\\Users\\Administrator\\documents\\netty\\data\\nettyCommitMessage.json");
+
         long before = System.currentTimeMillis();
-        FileGraph fg = FileGraph.valueOf(gitCommits);
-//        RiskRank.doRank(fg);
+        List<GitCommit> gitCommits = DataMergeFromAllCommit.MergeFrom(dmfcf.getGitStatPath(),dmfcf.getGitCommitMessage());
+        FileGraph fg = dmfcf.build(gitCommits);
         long after = System.currentTimeMillis();
         System.out.println("transform gitCommits to fileGraph took time " + (after - before) + "ms");
         ViewDataPacker viewDataPacker = new ViewDataPacker(fg);
@@ -39,7 +40,7 @@ public class getOverAllViewAction {
         System.out.println("down:" + downThreshold + " up:" + upThreshold);
 
         try {
-            if(downThreshold < 5) downThreshold = 10;
+            if(downThreshold < DefaultConfigure.DEFAULT_DOWN_THRESHOLD) downThreshold = DefaultConfigure.DEFAULT_DOWN_THRESHOLD;
             long fileId = viewDataPacker.GetJsonForD3WithRange(downThreshold,upThreshold);
 //            HttpServletResponse response = (HttpServletResponse) ac.get(ServletActionContext.HTTP_RESPONSE);
 //            response.setContentType("text/html;charset=utf-8");

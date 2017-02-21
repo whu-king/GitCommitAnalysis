@@ -1,7 +1,7 @@
 package actions;
 
 import com.opensymphony.xwork2.ActionContext;
-import dataAccess.DataMerge;
+import dataAccess.DataMergeFromAllCommit;
 import model.gitLog.GitCommit;
 import org.apache.struts2.ServletActionContext;
 import statistic.CommitSizeAnalyzer;
@@ -16,8 +16,8 @@ import java.util.List;
 public class getCommitSizeTimeViewAction {
 
     public void execute(){
-        List<GitCommit> gitCommits =  DataMerge.MergeFrom("C:\\Users\\Administrator\\documents\\netty\\netty\\nettyStat2.json",
-                "C:\\Users\\Administrator\\documents\\netty\\netty\\nettyCommitMessage.json");
+        List<GitCommit> gitCommits =  DataMergeFromAllCommit.MergeFrom("C:\\Users\\Administrator\\documents\\netty\\data\\nettyStat2.json",
+                "C:\\Users\\Administrator\\documents\\netty\\data\\nettyCommitMessage.json");
         String jsonString = new CommitSizeAnalyzer(gitCommits).relateSizeAndTime();
         ActionContext ac = ActionContext.getContext();
         HttpServletResponse response = (HttpServletResponse) ac.get(ServletActionContext.HTTP_RESPONSE);

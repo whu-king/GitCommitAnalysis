@@ -10,6 +10,13 @@ public class Edge {
     private Node secondNode;
     private int weight;
 
+    public Edge(){}
+    public Edge(Node node1, Node node2, int weight){
+        this.firstNode = node1;
+        this.secondNode = node2;
+        this.weight = weight;
+    }
+
     public Node getFirstNode() {
         return firstNode;
     }

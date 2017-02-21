@@ -14,8 +14,10 @@ import java.util.List;
 public class CodeFile {
 
     private final String filePath;
+    //todo when analysis gitStat construct dirs
+//    private List<String> dirs;
     private int commitNum;
-    private int rowNum;
+//    private int rowNum;
     private double risk;
 //    private int bugFixInvolvedNum;
 //    private int age;
@@ -85,14 +87,6 @@ public class CodeFile {
 
     public void setCommitNum(int commitNum) {
         this.commitNum = commitNum;
-    }
-
-    public int getRowNum() {
-        return rowNum;
-    }
-
-    public void setRowNum(int rowNum) {
-        this.rowNum = rowNum;
     }
 
     public List<String> getCodeWorkers() {

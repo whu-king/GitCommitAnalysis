@@ -15,8 +15,8 @@ public class BasicProperty2ViewMapper implements Property2ViewMapper {
     @Override
     public double getRadiusFrom(Node node) {
         //todo more dynamic factors instead of solid 3
-        if(node.getFile().getCommitNum() > 240 ) return 60;
-        return (node.getFile().getCommitNum() / 4) + 1;
+        if(node.getFile().getCommitNum() > 240 ) return 40;
+        return (node.getFile().getCommitNum() / 6) + 3;
     }
 
     @Override
@@ -29,6 +29,6 @@ public class BasicProperty2ViewMapper implements Property2ViewMapper {
     @Override
     public double getLengthFrom(Edge edge) {
         //todo more dynamic
-        return 50 - edge.getWeight()/3;
+        return 60 - edge.getWeight()/3;
     }
 }

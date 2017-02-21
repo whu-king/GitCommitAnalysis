@@ -80,7 +80,7 @@ public class BasicChangeCouplingMeasure implements ChangeCouplingMeasure {
         return result;
     }
 
-    private HashMap<String, Integer> getCoupledClasses(Node node, int n, FileGraph graph) {
+    public static HashMap<String, Integer> getCoupledClasses(Node node, int n, FileGraph graph) {
         HashMap<String,Integer> coupledClasses = new HashMap<String, Integer>();
         String nodeName = node.getFile().getFilePath();
         CodeFile codeFile = node.getFile();

@@ -1,7 +1,6 @@
-import statistic.CommitSizeAnalyzer;
-import viewAdapter.ViewDataPacker;
-import dataAccess.DataMerge;
 import model.fileGraph.FileGraph;
+import statistic.CommitSizeAnalyzer;
+import dataAccess.DataMergeFromAllCommit;
 import model.gitLog.GitCommit;
 import statistic.RiskRank;
 
@@ -14,12 +13,12 @@ import java.util.List;
 public class Main {
 
     public static void main(String[] args) throws IOException {
-        List<GitCommit> gitCommits =  DataMerge.MergeFrom("C:\\Users\\Administrator\\documents\\netty\\netty\\nettyStat2.json",
-                "C:\\Users\\Administrator\\documents\\netty\\netty\\nettyCommitMessage.json");
+        List<GitCommit> gitCommits =  DataMergeFromAllCommit.MergeFrom("C:\\Users\\Administrator\\documents\\netty\\data\\nettyStat2.json",
+                "C:\\Users\\Administrator\\documents\\netty\\data\\nettyCommitMessage.json");
         long before = System.currentTimeMillis();
-//        FileGraph fg = FileGraph.valueOf(gitCommits);
-        new CommitSizeAnalyzer(gitCommits).relateSizeAndTime();
-//        new RiskRank(fg).doRank();
+        FileGraph fg = FileGraph.valueOf(gitCommits);
+//        new CommitSizeAnalyzer(gitCommits).relateSizeAndTime();
+        new RiskRank(fg).doRank();
 //        long after = System.currentTimeMillis();
 //        System.out.println("transform gitCommits to fileGraph took time " + (after - before) + "ms");
 //        ViewDataPacker viewDataPacker = new ViewDataPacker(fg);

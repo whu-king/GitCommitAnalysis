@@ -27,7 +27,7 @@
                             var tip = dialog(
                                     {content : 'success',
                                      ok:function(){
-                                         $.getJSON("css\\GraphJson.json");
+                                         $.getJSON("temp\\GraphJson.json");
                                          window.location.reload();
                                      }}
                             );
@@ -37,6 +37,39 @@
                 );
             },
             okValue: 'submit'}
+        );
+        eventInfo.show();
+    }
+
+    function submitFileSet(){
+        var eventInfo = dialog({
+                    title: 'Submit Files name, separated by ,',
+                    content: '<p>FileNames:</p><input  id="files"  value="" /><br>',
+                    ok: function () {
+
+                        var fileSet = $('#files').val();
+                        var fileJson = {
+                            "fileSet": fileSet
+                        }
+
+
+                        $.get(
+                                "getCommitRelated",
+                                fileJson,
+                                function () {
+                                    var tip = dialog(
+                                            {content : 'success',
+                                                ok:function(){
+                                                    $.getJSON("temp\\GraphJson.json");
+                                                    window.location.reload();
+                                                }}
+                                    );
+                                    tip.show();
+                                },
+                                "text"
+                        );
+                    },
+                    okValue: 'submit'}
         );
         eventInfo.show();
     }
@@ -51,8 +84,10 @@
 </style>
 <div>
     <P class="button white" onclick="changeThreshold();">Change Co-change Threshold</P>
+    <P class="button white" ><a href = "commitTimeAndSizeView.html">Get Commmit-time-size View </a></P>
+    <P class="button white" onclick="submitFileSet();">Get Commit Related File Graph </P>
 </div>
-<svg width="1400" height="1400"></svg>
+<svg width="1800" height="1400"></svg>
 <link rel="stylesheet" type="text/css" href="css/ui-dialog.css"/>
 <link rel="stylesheet" type="text/css" href="css/button.css"/>
 <script src="js/d3.js"></script>
@@ -66,7 +101,7 @@
 
     //Json文件更新后，需要重新加载才能识别
 //    window.location.reload();
-    draw("css\\GraphJson.json");
+    draw("temp\\GraphJson.json");
     function draw(dataFile) {
         d3.select("svg").selectAll("g").remove();
         var svg = d3.select("svg"),
@@ -89,7 +124,7 @@
                         })
         )
                 .force("charge", d3.forceManyBody()
-                        .strength(-40)
+                        .strength(-100)
                         .distanceMax(500))//微小的排斥力
                 .force("collision", d3.forceCollide()
                         .radius(function (d) {
@@ -149,7 +184,7 @@
 
                 //放大局部
                 simulation.force("charge", d3.forceManyBody()
-                        .strength(-300)
+                        .strength(-100)
                         .distanceMax(2500));
                 svg.attr("width", width * 3);
                 svg.attr("height", height * 3);

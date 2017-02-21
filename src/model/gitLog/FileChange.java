@@ -43,4 +43,10 @@ public  class FileChange {
         return false;
     }
 
+
+    public int hashCode(){
+        return path.hashCode();
+    }
+
+
 }

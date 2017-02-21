@@ -56,10 +56,29 @@ public class GitCommit {
 
     public boolean isBugCommit() {
 
-        String regex = ".*(bug|fix|err|fail|leak).*";
+        String regex = ".*((bug|fix|err|fail|leak)|#[0-9]*).*";
         Pattern bug = Pattern.compile(regex,Pattern.CASE_INSENSITIVE);
         Matcher m = bug.matcher(message);
         if(m.find()) return true;
         return false;
     }
+
+    public boolean equals(Object o){
+        if(this == o){
+            return true;
+        }
+        if(o.getClass() == this.getClass()){
+            GitCommit gitCommit = (GitCommit)o;
+            if(this.commitSHA.equalsIgnoreCase(gitCommit.commitSHA)){
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public int hashCode(){
+        return commitSHA.hashCode();
+    }
+
 }

@@ -11,6 +11,7 @@ import java.util.*;
  */
 public class FileGraph extends Graph {
 
+    private double impact = 0;
 
     public static FileGraph valueOf(List<GitCommit> gitCommits) {
         FileGraph g = new FileGraph();
@@ -79,7 +80,7 @@ public class FileGraph extends Graph {
         if (this.nodes.containsKey(path)) {
             return this.nodes.get(path);
         }
-        ;
+
         return null;
     }
 
@@ -107,5 +108,11 @@ public class FileGraph extends Graph {
         return null;
     }
 
+    public double getImpact() {
+        return impact;
+    }
 
+    public void setImpact(double impact) {
+        this.impact = impact;
+    }
 }

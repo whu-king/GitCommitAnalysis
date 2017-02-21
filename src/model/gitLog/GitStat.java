@@ -25,4 +25,22 @@ public class GitStat {
     public void setDiffs(List<FileChange> diffs) {
         this.diffs = diffs;
     }
+
+    public boolean equals(Object o){
+        if(this == o){
+            return true;
+        }
+        if(o.getClass() == this.getClass()){
+           GitStat gitStat = (GitStat)o;
+            if(this.commitSHA.equalsIgnoreCase(gitStat.commitSHA)){
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public int hashCode(){
+        return commitSHA.hashCode();
+    }
 }
