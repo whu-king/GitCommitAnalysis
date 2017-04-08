@@ -6,6 +6,8 @@ import model.gitLog.GitStat;
 import utils.FormatConversionUtil;
 
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Created by Administrator on 2017/1/1.
@@ -17,16 +19,34 @@ public class DataCleaner {
 
     public static List<GitCommit> clean(List<GitCommit> gitCommits){
         List<GitCommit> newGits = new ArrayList<GitCommit>();
-        newGits = mergeSimilarCommit(gitCommits);
-        for(GitCommit gitCommit : newGits){
+//        newGits = mergeSimilarCommit(gitCommits);
+
+        for(GitCommit gitCommit : gitCommits){
+
+            if(isTextModification(gitCommit)) continue;
             GitStat gitStat = gitCommit.getFileDiff();
             gitStat = checkGitStat(gitStat);
+            newGits.add(gitCommit);
         }
         return newGits;
     }
 
+    public static boolean isTextModification(GitCommit gitCommit){
+        String message = gitCommit.getMessage();
+        String regex = ".*(author|license|licence|copyright|txt|example|tag).*";
+        Pattern bug = Pattern.compile(regex,Pattern.CASE_INSENSITIVE);
+        Matcher m = bug.matcher(message);
+        if(m.find()) {
+            System.out.println(gitCommit.getMessage());
+            return true;
+        }
+        GitStat fc = gitCommit.getFileDiff();
+        if( fc.getDiffs().size() > 200) return true;
+        return false;
+    }
 
     public static GitStat checkGitStat(GitStat gitStat) {
+
         List<FileChange> changes = gitStat.getDiffs();
         changes = checkDuplicateCommit(changes);
         changes = checkEmptyOperation(changes);

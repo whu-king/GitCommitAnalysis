@@ -19,6 +19,7 @@ public class DataMergeFromAllCommit {
         String gitCommitJson = FileOperation.readStringFrom(gitCommitPath);
         List<GitCommit> gitCommits = GsonUtil.jsonToList(gitCommitJson.trim(),  GitCommit[].class);
         List<GitStat> gitStats = GsonUtil.jsonToList(gitStatJson.trim(), GitStat[].class);
+
         GitCommit BuggitCommit = null;
         //gitStat 和 gitCommit是一一对应的
         for(GitCommit gitCommit : gitCommits){
@@ -26,13 +27,15 @@ public class DataMergeFromAllCommit {
 //            GitStat gitStat = findBySHAFrom(gitStats,sha);
             int index = gitCommits.indexOf(gitCommit);
             GitStat gitStat = findByIndexFrom(gitStats,index);
-            gitStat = DataCleaner.checkGitStat(gitStat);
             if(gitStat == null) {
                 System.out.println("Missing Stat Information For Commit : " + sha );
             }else {
                 gitCommit.setFileDiff(gitStat);
             }
         }
+        System.out.println("GitCommit Compose Finished");
+
+        gitCommits = DataCleaner.clean(gitCommits);
 
         return gitCommits;
     }

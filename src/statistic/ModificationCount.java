@@ -1,5 +1,8 @@
 package statistic;
 
+import dataAccess.DataMergeFromAllCommit;
+import dataAccess.DataMergeFromCurrentFiles;
+import model.fileGraph.FileGraph;
 import model.gitLog.FileChange;
 import model.gitLog.GitCommit;
 import utils.CollectionUtil;
@@ -53,6 +56,13 @@ public class ModificationCount {
     }
 
     public static void main(String[] args){
+        ModificationCount mc = new ModificationCount();
+        DataMergeFromCurrentFiles dmfcf = new DataMergeFromCurrentFiles();
+        dmfcf.setProjectDir("C:\\Users\\Administrator\\Documents\\netty\\netty");
+        dmfcf.setGitStatPath("C:\\Users\\Administrator\\documents\\netty\\data\\nettyStat2.json");
+        dmfcf.setGitCommitMessage("C:\\Users\\Administrator\\documents\\netty\\data\\nettyCommitMessage.json");
 
+        List<GitCommit> gitCommits = DataMergeFromAllCommit.MergeFrom(dmfcf.getGitStatPath(), dmfcf.getGitCommitMessage());
+        mc.whoIsMostModified(gitCommits);
     }
 }

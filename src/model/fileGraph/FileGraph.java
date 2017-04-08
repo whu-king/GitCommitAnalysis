@@ -115,4 +115,33 @@ public class FileGraph extends Graph {
     public void setImpact(double impact) {
         this.impact = impact;
     }
+
+    public  Map<String, Edge> sortEdgeByValue() {
+        Map<String, Edge> sortedMap = new LinkedHashMap<String, Edge>();
+        if (edges != null && !edges.isEmpty()) {
+            List<Map.Entry<String, Edge>> entryList = new ArrayList<Map.Entry<String, Edge>>(edges.entrySet());
+            Collections.sort(entryList,
+                    new Comparator<Map.Entry<String, Edge>>() {
+                        public int compare(Map.Entry<String, Edge> entry1,
+                                           Map.Entry<String, Edge> entry2) {
+                            int value1 = 0, value2 = 0;
+                            try {
+                                value1 = entry1.getValue().getWeight();
+                                value2 = entry2.getValue().getWeight();
+                            } catch (NumberFormatException e) {
+                                value1 = 0;
+                                value2 = 0;
+                            }
+                            return value2 - value1;
+                        }
+                    });
+            Iterator<Map.Entry<String, Edge>> iter = entryList.iterator();
+            Map.Entry<String, Edge> tmpEntry = null;
+            while (iter.hasNext()) {
+                tmpEntry = iter.next();
+                sortedMap.put(tmpEntry.getKey(), tmpEntry.getValue());
+            }
+        }
+        return sortedMap;
+    }
 }

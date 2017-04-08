@@ -22,8 +22,8 @@ public class MissingFilePrediction {
             if(baseCommits.contains(gitCommit)) commonCommits.add(gitCommit);
         }
         p = commonCommits.size() * 1.0 / baseCommits.size();
-        System.out.println(conditionNode.getFile().getFilePath() + " ---> " +
-        predictedNode.getFile().getFilePath() + "\n prob: " + p);
+//        System.out.println(conditionNode.getFile().getFilePath() + " ---> " +
+//        predictedNode.getFile().getFilePath() + "\n prob: " + p);
         return p;
 
     }

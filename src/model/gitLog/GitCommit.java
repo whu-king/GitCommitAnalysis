@@ -13,6 +13,7 @@ public class GitCommit {
     private String date;
     private String message;
     private GitStat fileDiff;
+    private double impact;
 
     public GitStat getFileDiff() {
         return fileDiff;
@@ -81,4 +82,11 @@ public class GitCommit {
         return commitSHA.hashCode();
     }
 
+    public double getImpact() {
+        return impact;
+    }
+
+    public void setImpact(double impact) {
+        this.impact = impact;
+    }
 }

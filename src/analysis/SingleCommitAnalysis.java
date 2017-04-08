@@ -1,5 +1,6 @@
 package analysis;
 
+import actions.DefaultConfigure;
 import dataAccess.DataMergeFromAllCommit;
 import dataAccess.DataMergeFromCurrentFiles;
 import model.fileGraph.CodeFile;
@@ -11,7 +12,6 @@ import model.gitLog.GitCommit;
 import org.apache.commons.collections.map.HashedMap;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -48,8 +48,10 @@ public class SingleCommitAnalysis {
         int commitSize = commitFiles.size();
         for (int i = 0; i < commitSize; i++) {
             Node firstNode = fg.findNodeByPath(commitFiles.get(i));
+            if(firstNode == null) continue;
             for (int j = i + 1; j < commitSize; j++) {
                 Node secondNode = fg.findNodeByPath(commitFiles.get(j));
+                if(secondNode == null) continue;
                 certainGraph.addEdge(new Edge(firstNode, secondNode, 100));
             }
         }
@@ -58,6 +60,7 @@ public class SingleCommitAnalysis {
 
         for (String commitFileName : commitFiles) {
             Node node = fg.findNodeByPath(commitFileName);
+            if(node == null) continue;
             impact += getImpactForSingleNode(node, fg);
             for (String firstCoupledFileName : firstCoupledFiles) {
 
@@ -81,6 +84,7 @@ public class SingleCommitAnalysis {
         }
 
         System.out.println("Impact : " + impact);
+        certainGraph.setImpact(impact);
 
         for(Node node : certainGraph.getNodes().values()){
             String filepath = node.getFile().getFilePath();
@@ -95,6 +99,7 @@ public class SingleCommitAnalysis {
         FileGraph certainGraph = new FileGraph();
         for(String name : files){
             Node node = fg.findNodeByPath(name);
+            if(node == null) continue;
             String nodeName = node.getFile().getFilePath();
             CodeFile codeFile = node.getFile();
             List<GitCommit> gitCommits = codeFile.getChangeLog();
@@ -112,7 +117,7 @@ public class SingleCommitAnalysis {
                             anode = fg.findNodeByPath(className);
                         }
 
-                        if(siftFirstNodeByRisk(anode)) {
+                        if(siftNodeByRisk(anode)) {
                             certainGraph.addEdge(edge);
                             certainGraph.addNode(anode);
                             probality.put(node.getFile().getFilePath()+anode.getFile().getFilePath(),
@@ -127,17 +132,17 @@ public class SingleCommitAnalysis {
         return certainGraph;
     }
 
-    private static boolean siftFirstNodeByRisk( Node anode) {
+    private static boolean siftNodeByRisk(Node anode) {
         RiskEvaluateAlgorithm rea = new XieEvaluateAlgorithm();
         CodeFile targetCF = anode.getFile();
-        if(targetCF.getCommitNum() < 10) return false;
-        if(rea.getFileRisk(targetCF) == 0) return false;
+        if(targetCF.getCommitNum() < DefaultConfigure.DEFAULT_DOWN_THRESHOLD) return false;
+//        if(rea.getFileRisk(targetCF) == 0) return false;
         return true;
     }
 
     public static double getImpactForSingleNode(Node node, FileGraph fg){
         ChangeCouplingMeasure changeCouplingMeasure = new BasicChangeCouplingMeasure();
-        double timeExp = changeCouplingMeasure.getTimeExpSumOfNCoupledLinks(node,5,fg);
+        double timeExp = changeCouplingMeasure.getTimeExpSumOfNCoupledLinks(node,DefaultConfigure.DEFAULT_DOWN_THRESHOLD,fg);
         return timeExp;
     }
 
