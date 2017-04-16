@@ -10,6 +10,7 @@ import viewAdapter.ViewDataPacker;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -30,7 +31,7 @@ public class getCommitRelatedGraph {
         FileGraph fg = dmfcf.build(gitCommits);
         if(fileSet != null) {
             String[] fileSets = fileSet.trim().split(",|;");
-            FileGraph siftedFg = SingleCommitAnalysis.listCoupledFile(Arrays.asList(fileSets), fg, DefaultConfigure.DEFAULT_DOWN_THRESHOLD);
+            FileGraph siftedFg = SingleCommitAnalysis.listCoupledFile(new Date(System.currentTimeMillis()),Arrays.asList(fileSets), fg, DefaultConfigure.DEFAULT_DOWN_THRESHOLD);
             ViewDataPacker viewDataPacker = new ViewDataPacker(siftedFg);
 
             //todo put graph into DB

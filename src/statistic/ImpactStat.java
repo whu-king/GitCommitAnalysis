@@ -14,6 +14,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import java.io.*;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -50,7 +51,7 @@ public class ImpactStat {
             for(FileChange change : changes){
                 files[i ++] = change.getPath();
             }
-            double impact = SingleCommitAnalysis.listCoupledFile(Arrays.asList(files),fg, DefaultConfigure.DEFAULT_DOWN_THRESHOLD).getImpact();
+            double impact = SingleCommitAnalysis.listCoupledFile(new Date(System.currentTimeMillis()),Arrays.asList(files),fg, DefaultConfigure.DEFAULT_DOWN_THRESHOLD).getImpact();
             writeDataIntoExcel(impact,rowNum,gitCommit);
             rowNum++;
         }

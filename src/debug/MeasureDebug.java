@@ -8,8 +8,10 @@ import model.fileGraph.FileGraph;
 import model.fileGraph.Node;
 import model.gitLog.FileChange;
 import model.gitLog.GitCommit;
+import utils.FormatConversionUtil;
 
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -42,6 +44,7 @@ public class MeasureDebug {
 
     public static void getCommitRelatedGraph(String sha){
         String fileSets[] = new String[10000];
+        Date date = null;
         for(GitCommit gitCommit : gitCommits){
             if(gitCommit.getCommitSHA().equalsIgnoreCase(sha)){
                 List<FileChange> diffs = gitCommit.getFileDiff().getDiffs();
@@ -50,18 +53,19 @@ public class MeasureDebug {
                 for(int i = 0 ; i < size; i++){
                     fileSets[i] = diffs.get(i).getPath();
                 }
+                date = FormatConversionUtil.getDateFromString(gitCommit.getDate());
                 break;
             }
         }
-        FileGraph siftedFg = SingleCommitAnalysis.listCoupledFile(Arrays.asList(fileSets), fg, DefaultConfigure.DEFAULT_DOWN_THRESHOLD);
+        FileGraph siftedFg = SingleCommitAnalysis.listCoupledFile(date,Arrays.asList(fileSets), fg, DefaultConfigure.DEFAULT_DOWN_THRESHOLD);
     }
 
     public static void zero(){
-        getCommitRelatedGraph("383bb80d1ef42b32f8986672269550f37356adb8");
+        getCommitRelatedGraph("bab9af2b52b8f4880e4c3dc316751865cf77c2bb");
     }
 
     public static void cleanup(){
-        getCommitRelatedGraph("aab71ccd8adf2363a0c51765386d37dc34593d8b");
+        getCommitRelatedGraph("b5d715343a24be61be13a1546908ff9dbd3a743c");
     }
 
     public static void defect(){

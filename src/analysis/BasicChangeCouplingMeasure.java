@@ -4,6 +4,7 @@ import model.fileGraph.*;
 import model.gitLog.FileChange;
 import model.gitLog.GitCommit;
 import model.gitLog.GitStat;
+import utils.FormatConversionUtil;
 
 import java.io.File;
 import java.util.*;
@@ -14,14 +15,14 @@ import java.util.*;
 public class BasicChangeCouplingMeasure implements ChangeCouplingMeasure {
 
     @Override
-    public int getNumberOfNCoupledClass(Node node, int n, FileGraph graph) {
-        HashMap<String, Integer> coupledClasses = getCoupledClasses(node, n, graph);
+    public int getNumberOfNCoupledClass(Date date,Node node, int n, FileGraph graph) {
+        HashMap<String, Integer> coupledClasses = getCoupledClasses(date,node, n, graph);
         return coupledClasses.values().size();
     }
 
     @Override
-    public int getSumOfNCoupledLinks(Node node, int n, FileGraph graph) {
-        HashMap<String, Integer> coupledClasses = getCoupledClasses(node, n, graph);
+    public int getSumOfNCoupledLinks(Date date, Node node, int n, FileGraph graph) {
+        HashMap<String, Integer> coupledClasses = getCoupledClasses(date,node, n, graph);
         int sum = 0;
         for(Integer weight : coupledClasses.values()){
             sum += weight;
@@ -30,12 +31,14 @@ public class BasicChangeCouplingMeasure implements ChangeCouplingMeasure {
     }
 
     @Override
-    public double getTimeExpSumOfNCoupledLinks(Node node, int n, FileGraph graph) {
+    public double getTimeExpSumOfNCoupledLinks(Date date, Node node, int n, FileGraph graph) {
 
-        HashMap<String, Integer> coupledClasses = getCoupledClasses(node, n, graph);
+        HashMap<String, Integer> coupledClasses = getCoupledClasses(date,node, n, graph);
         List<GitCommit> gitCommitOfTargetClass = node.getFile().getChangeLog();
         List<String> gitCommitSHA = new ArrayList<String>();
         for(GitCommit gitCommit : gitCommitOfTargetClass){
+            Date commitDate = FormatConversionUtil.getDateFromString(gitCommit.getDate());
+            if(commitDate.after(date)) continue;
             gitCommitSHA.add(gitCommit.getCommitSHA());
         }
         int size = gitCommitSHA.size();
@@ -45,6 +48,8 @@ public class BasicChangeCouplingMeasure implements ChangeCouplingMeasure {
             Node anotherNode = graph.findNodeByPath(className);
             List<GitCommit> anotherGitCommits = anotherNode.getFile().getChangeLog();
             for(GitCommit gitCommit : anotherGitCommits){
+                Date commitDate = FormatConversionUtil.getDateFromString(gitCommit.getDate());
+                if(commitDate.after(date)) continue;
                 String sha = gitCommit.getCommitSHA();
                 int index = 0;
                 if((index = gitCommitSHA.indexOf(sha)) > -1){
@@ -56,20 +61,25 @@ public class BasicChangeCouplingMeasure implements ChangeCouplingMeasure {
     }
 
     @Override
-    public double getTimeLinearSumOfNCoupledLinks(Node node, int n, FileGraph graph) {
-        HashMap<String, Integer> coupledClasses = getCoupledClasses(node, n, graph);
+    public double getTimeLinearSumOfNCoupledLinks(Date nowDate,Node node, int n, FileGraph graph) {
+        HashMap<String, Integer> coupledClasses = getCoupledClasses(nowDate,node, n, graph);
         List<GitCommit> gitCommitOfTargetClass = node.getFile().getChangeLog();
         List<String> gitCommitSHA = new ArrayList<String>();
         for(GitCommit gitCommit : gitCommitOfTargetClass){
+            Date commitDate = FormatConversionUtil.getDateFromString(gitCommit.getDate());
+            if(commitDate.after(nowDate) || commitDate.equals(nowDate)) continue;
             gitCommitSHA.add(gitCommit.getCommitSHA());
         }
         int size = gitCommitSHA.size();
+        if(size == 0) return 0;
         double result = 0;
 
         for(String className : coupledClasses.keySet()){
             Node anotherNode = graph.findNodeByPath(className);
             List<GitCommit> anotherGitCommits = anotherNode.getFile().getChangeLog();
             for(GitCommit gitCommit : anotherGitCommits){
+                Date commitDate = FormatConversionUtil.getDateFromString(gitCommit.getDate());
+                if(commitDate.after(nowDate) || commitDate.equals(nowDate)) continue;
                 String sha = gitCommit.getCommitSHA();
                 int index = 0;
                 if((index = gitCommitSHA.indexOf(sha)) > -1){
@@ -80,12 +90,14 @@ public class BasicChangeCouplingMeasure implements ChangeCouplingMeasure {
         return result;
     }
 
-    public static HashMap<String, Integer> getCoupledClasses(Node node, int n, FileGraph graph) {
+    public static HashMap<String, Integer> getCoupledClasses(Date date, Node node, int n, FileGraph graph) {
         HashMap<String,Integer> coupledClasses = new HashMap<String, Integer>();
         String nodeName = node.getFile().getFilePath();
         CodeFile codeFile = node.getFile();
         List<GitCommit> gitCommits = codeFile.getChangeLog();
         for(GitCommit gitCommit : gitCommits){
+            Date commitDate = FormatConversionUtil.getDateFromString(gitCommit.getDate());
+            if(commitDate.after(date) || commitDate.equals(date)) continue;
             List<FileChange> fileChanges = gitCommit.getFileDiff().getDiffs();
             for(FileChange fileChange : fileChanges ){
                 String className = fileChange.getPath();

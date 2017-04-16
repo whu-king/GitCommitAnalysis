@@ -10,6 +10,7 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import utils.FormatConversionUtil;
 
 import java.util.Arrays;
 import java.util.Date;
@@ -48,7 +49,10 @@ public class StatThread implements Runnable {
             for(FileChange change : changes){
                 files[k ++] = change.getPath();
             }
-            double impact = SingleCommitAnalysis.listCoupledFile(Arrays.asList(files), fg, DefaultConfigure.DEFAULT_DOWN_THRESHOLD).getImpact();
+
+            Date nowDate = FormatConversionUtil.getDateFromString(gitCommit.getDate());
+
+            double impact = SingleCommitAnalysis.listCoupledFile(nowDate,Arrays.asList(files), fg, DefaultConfigure.DEFAULT_DOWN_THRESHOLD).getImpact();
             gitCommit.setImpact(impact);
             allGCS.putIfAbsent(gitCommit.getCommitSHA(),gitCommit);
         }

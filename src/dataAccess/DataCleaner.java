@@ -37,7 +37,7 @@ public class DataCleaner {
         Pattern bug = Pattern.compile(regex,Pattern.CASE_INSENSITIVE);
         Matcher m = bug.matcher(message);
         if(m.find()) {
-            System.out.println(gitCommit.getMessage());
+//            System.out.println(gitCommit.getMessage());
             return true;
         }
         GitStat fc = gitCommit.getFileDiff();

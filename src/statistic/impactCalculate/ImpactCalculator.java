@@ -71,7 +71,7 @@ public class ImpactCalculator {
             writeDataIntoExcel(i++,gitCommit);
         }
         System.out.println(after - before);
-        String targetFile = "D:\\Impact_v9.xlsx";
+        String targetFile = "D:\\NettyLineImpact_v2.xlsx";
         File f = new File(targetFile);
         f.createNewFile();
         OutputStream out = new FileOutputStream(f);
